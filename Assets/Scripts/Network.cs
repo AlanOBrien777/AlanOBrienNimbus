@@ -5,6 +5,9 @@ using UnityEngine.Networking;
 
 public class Network : MonoBehaviour
 {
+    public delegate void AuthenticationRequestCompleted();
+    public delegate void AuthenticationRequestFailed();
+
 
     public static Network sharedInstance;
 
@@ -31,6 +34,29 @@ public class Network : MonoBehaviour
 
     public bool IsAuthenticated()
     {
-        return false;
+        return m_BrainCloud.Client.Authenticated;
     }
+
+    public void RequestAnnonymousAuthentication(AuthenticationRequestCompleted authenticationRequestCompleted = null,AuthenticationRequestFailed authenticationRequestFailed = null)
+    {
+        BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+        {
+            Debug.Log("RequestAnnonymousAuthentication success: " + responseData);
+
+            if (authenticationRequestCompleted != null)
+                authenticationRequestCompleted();
+        };
+
+        BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+        {
+            Debug.Log("RequestAnnonymousAuthentication failed: " + statusMessage);
+
+            if (authenticationRequestFailed != null)
+                authenticationRequestFailed();
+        };
+
+        m_BrainCloud.AuthenticateAnonymous(successCallback, failureCallback);
+
+    }
+
 }
