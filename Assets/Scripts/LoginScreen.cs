@@ -21,5 +21,15 @@ public class LoginScreen : MonoBehaviour
        
     }
 
-    public void OnButtonClick() { Network.sharedInstance.RequestAnnonymousAuthentication(); }
+    public void OnButtonClick() 
+    {
+        if (Network.sharedInstance.HasAuthenticatedPreviously())
+        {
+            Network.sharedInstance.Reconect();
+        }
+        else
+        {
+            Network.sharedInstance.RequestAnnonymousAuthentication();
+        }
+    }
 }

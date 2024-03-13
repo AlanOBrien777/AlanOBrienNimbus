@@ -32,10 +32,36 @@ public class Network : MonoBehaviour
         m_BrainCloud.RunCallbacks();
     }
 
+    public bool HasAuthenticatedPreviously()
+    {
+        return m_BrainCloud.GetStoredProfileId() != "" && m_BrainCloud.GetStoredAnonymousId() != "";
+    }
+
     public bool IsAuthenticated()
     {
         return m_BrainCloud.Client.Authenticated;
     }
+
+    public void Reconect(AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null) 
+    {
+        BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+        {
+            Debug.Log("Reconnect authentication success: " + responseData);
+
+            HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
+        };
+
+        BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+        {
+            Debug.Log("Reconnect authentication failed: " + statusMessage);
+
+            if (authenticationRequestFailed != null)
+                authenticationRequestFailed();
+        };
+
+        m_BrainCloud.Reconnect(successCallback, failureCallback);
+    }
+
 
     public void RequestAnnonymousAuthentication(AuthenticationRequestCompleted authenticationRequestCompleted = null,AuthenticationRequestFailed authenticationRequestFailed = null)
     {
@@ -43,8 +69,7 @@ public class Network : MonoBehaviour
         {
             Debug.Log("RequestAnnonymousAuthentication success: " + responseData);
 
-            if (authenticationRequestCompleted != null)
-                authenticationRequestCompleted();
+            HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
         };
 
         BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
@@ -57,6 +82,12 @@ public class Network : MonoBehaviour
 
         m_BrainCloud.AuthenticateAnonymous(successCallback, failureCallback);
 
+    }
+
+    private void HandleAuthenticationSuccess(string responseData, object cbObject, AuthenticationRequestCompleted authenticationRequestCompleted)
+    {
+        if(authenticationRequestCompleted != null)
+            authenticationRequestCompleted();
     }
 
 }
