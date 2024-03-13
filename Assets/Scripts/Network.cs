@@ -84,6 +84,26 @@ public class Network : MonoBehaviour
 
     }
 
+    public void RequestAuthenticationUniversal(string userID, string password, AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null )
+    {
+        BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+        {
+            Debug.Log("Universal Authentication success: " + responseData);
+
+            HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
+        };
+
+        BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+        {
+            Debug.Log("Universal Authentication failed: " + statusMessage);
+
+            if (authenticationRequestFailed != null)
+                authenticationRequestFailed();
+        };
+
+        m_BrainCloud.AuthenticateUniversal(userID, password,true, successCallback, failureCallback);
+    }
+
     private void HandleAuthenticationSuccess(string responseData, object cbObject, AuthenticationRequestCompleted authenticationRequestCompleted)
     {
         if(authenticationRequestCompleted != null)
