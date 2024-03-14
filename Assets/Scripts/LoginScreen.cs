@@ -9,8 +9,13 @@ public class LoginScreen : MonoBehaviour
 {
 
     public Button loginButton;
+    public Button cookieButton;
     [SerializeField] private TMP_InputField usernameField;
     [SerializeField] private TMP_InputField passwordField;
+    public GameObject loginCanvas;
+    public GameObject cookieCanvas;
+    public int score = 0;
+    public TMP_Text scoreText;
 
     private Network.AuthenticationRequestCompleted m_AuthenticationRequestCompleted;
     private Network.AuthenticationRequestFailed m_AuthenticationRequestFailed;
@@ -23,16 +28,18 @@ public class LoginScreen : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        loginButton.onClick.AddListener(OnButtonClick);
+
+        cookieCanvas.SetActive(false);
     }
+    
 
     // Update is called once per frame
     void Update()
     {
-       
+        scoreText.text = "Score: " + score.ToString();
     }
 
-    public void OnButtonClick() 
+    public void OnLoginButtonClick() 
     {
          //if (Network.sharedInstance.HasAuthenticatedPreviously())
          //{
@@ -40,8 +47,17 @@ public class LoginScreen : MonoBehaviour
         // }
         //  else
         // {
-            Network.sharedInstance.RequestAuthenticationUniversal(usernameField.text, passwordField.text, m_AuthenticationRequestCompleted, m_AuthenticationRequestFailed);
+        Network.sharedInstance.RequestAuthenticationUniversal(usernameField.text, passwordField.text, m_AuthenticationRequestCompleted, m_AuthenticationRequestFailed);
+        loginCanvas.SetActive(false);
+        cookieCanvas.SetActive(true);
        // }
 
+    }
+
+    public void OnCookieButtonClick()
+    {
+        
+        score = score++;
+        
     }
 }
