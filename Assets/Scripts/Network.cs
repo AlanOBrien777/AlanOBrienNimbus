@@ -1,17 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
+using BrainCloud.JsonFx;
+using LitJson;
+
+
 
 public class Network : MonoBehaviour
 {
     public delegate void AuthenticationRequestCompleted();
     public delegate void AuthenticationRequestFailed();
 
+    public delegate void UpdateUserNameRequestCompleted();
+    public delegate void UpdateUserNameRequestFailed();
+
 
     public static Network sharedInstance;
 
     private BrainCloudWrapper m_BrainCloud;
+
+    private string m_Username;
     
     private void Awake()
     {
@@ -24,6 +30,8 @@ public class Network : MonoBehaviour
 
         Debug.Log("BrainCloud Client Version: " + m_BrainCloud.Client.BrainCloudClientVersion);
 
+        m_Username = "";
+
     }
 
     // Update is called once per frame
@@ -32,57 +40,62 @@ public class Network : MonoBehaviour
         m_BrainCloud.RunCallbacks();
     }
 
-    public bool HasAuthenticatedPreviously()
+    public string GetUserName()
     {
-        return m_BrainCloud.GetStoredProfileId() != "" && m_BrainCloud.GetStoredAnonymousId() != "";
+        return m_Username;
     }
+
+  //  public bool HasAuthenticatedPreviously()
+  //  {
+  //      return m_BrainCloud.GetStoredProfileId() != "" && m_BrainCloud.GetStoredAnonymousId() != "";
+  //  }
 
     public bool IsAuthenticated()
     {
         return m_BrainCloud.Client.Authenticated;
     }
 
-    public void Reconect(AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null) 
-    {
-        BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
-        {
-            Debug.Log("Reconnect authentication success: " + responseData);
+    //public void Reconect(AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null) 
+   // {
+     //   BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+     //   {
+     //       Debug.Log("Reconnect authentication success: " + responseData);
 
-            HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
-        };
+      //      HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
+     //   };
 
-        BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
-        {
-            Debug.Log("Reconnect authentication failed: " + statusMessage);
+     //   BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+      //  {
+      //      Debug.Log("Reconnect authentication failed: " + statusMessage);
+//
+     //       if (authenticationRequestFailed != null)
+               // authenticationRequestFailed();
+      //  };
 
-            if (authenticationRequestFailed != null)
-                authenticationRequestFailed();
-        };
-
-        m_BrainCloud.Reconnect(successCallback, failureCallback);
-    }
+       // m_BrainCloud.Reconnect(successCallback, failureCallback);
+  //  }
 
 
-    public void RequestAnnonymousAuthentication(AuthenticationRequestCompleted authenticationRequestCompleted = null,AuthenticationRequestFailed authenticationRequestFailed = null)
-    {
-        BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
-        {
-            Debug.Log("RequestAnnonymousAuthentication success: " + responseData);
+   // public void RequestAnnonymousAuthentication(AuthenticationRequestCompleted authenticationRequestCompleted = null,AuthenticationRequestFailed authenticationRequestFailed = null)
+   // {
+    //    BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+    //    {
+     //       Debug.Log("RequestAnnonymousAuthentication success: " + responseData);
 
-            HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
-        };
+     //       HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
+     //   };
 
-        BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
-        {
-            Debug.Log("RequestAnnonymousAuthentication failed: " + statusMessage);
+      //  BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+     //   {
+     //       Debug.Log("RequestAnnonymousAuthentication failed: " + statusMessage);
 
-            if (authenticationRequestFailed != null)
-                authenticationRequestFailed();
-        };
+      //      if (authenticationRequestFailed != null)
+              //  authenticationRequestFailed();
+     //   };
 
-        m_BrainCloud.AuthenticateAnonymous(successCallback, failureCallback);
+     //   m_BrainCloud.AuthenticateAnonymous(successCallback, failureCallback);
 
-    }
+   // }
 
     public void RequestAuthenticationUniversal(string userID, string password, AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null )
     {
@@ -102,10 +115,47 @@ public class Network : MonoBehaviour
         };
 
         m_BrainCloud.AuthenticateUniversal(userID, password,true, successCallback, failureCallback);
+
+        
+    }
+
+    [System.Obsolete]
+    public void RequestUserName(string username,UpdateUserNameRequestCompleted updateUserNameRequestCompleted = null,UpdateUserNameRequestFailed updateUserNameRequestFailed = null)
+    {
+       
+        
+            BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+            {
+                Debug.Log("Username Request Success: " + responseData);
+
+                JsonData jsonData = JsonMapper.ToObject(responseData);
+                m_Username = jsonData["data"]["playerName"].ToString();
+
+                if(updateUserNameRequestCompleted != null)
+                {
+                    updateUserNameRequestCompleted();
+                }
+            };
+
+            BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+            {
+                Debug.Log("Username request failed: " + statusMessage);
+
+                if (updateUserNameRequestFailed != null)
+                    updateUserNameRequestFailed();
+            };
+
+            m_BrainCloud.PlayerStateService.UpdateUserName(username, successCallback, failureCallback);
+
+        
+        
     }
 
     private void HandleAuthenticationSuccess(string responseData, object cbObject, AuthenticationRequestCompleted authenticationRequestCompleted)
     {
+        JsonData jsonData = JsonMapper.ToObject(responseData);
+        m_Username = jsonData["data"]["playerName"].ToString();
+
         if(authenticationRequestCompleted != null)
             authenticationRequestCompleted();
     }
