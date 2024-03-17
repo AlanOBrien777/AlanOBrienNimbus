@@ -42,16 +42,16 @@ public class LoginScreen : MonoBehaviour
         scoreText.text = "Score: " + score.ToString();
     }
 
-    [System.Obsolete]
     public void OnLoginButtonClick() 
     {
-         //if (Network.sharedInstance.HasAuthenticatedPreviously())
-         //{
-         //    Network.sharedInstance.Reconect();
-        // }
-       //  else
+        // if (Network.sharedInstance.HasAuthenticatedPreviously())
         // {
+        //     Network.sharedInstance.Reconect();
+        // }
+      //  else
+       //  {
         Network.sharedInstance.RequestAuthenticationUniversal(usernameField.text, passwordField.text, m_AuthenticationRequestCompleted, m_AuthenticationRequestFailed);
+        Network.sharedInstance.RequestAnnonymousAuthentication(m_AuthenticationRequestCompleted, m_AuthenticationRequestFailed);
         loginCanvas.SetActive(false);
         cookieCanvas.SetActive(true);
         Network.sharedInstance.RequestUserName(usernameField.text.ToString());

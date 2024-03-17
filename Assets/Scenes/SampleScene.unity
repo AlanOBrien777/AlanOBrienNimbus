@@ -1720,6 +1720,7 @@ MonoBehaviour:
   cookieCanvas: {fileID: 374182135}
   score: 0
   scoreText: {fileID: 274428144}
+  userNameText: {fileID: 1068416273}
 --- !u!4 &1669099831
 Transform:
   m_ObjectHideFlags: 0

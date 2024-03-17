@@ -40,62 +40,62 @@ public class Network : MonoBehaviour
         m_BrainCloud.RunCallbacks();
     }
 
-    public string GetUserName()
-    {
-        return m_Username;
-    }
+   // public string GetUserName()
+    //{
+       // return m_Username;
+   // }
 
-  //  public bool HasAuthenticatedPreviously()
-  //  {
-  //      return m_BrainCloud.GetStoredProfileId() != "" && m_BrainCloud.GetStoredAnonymousId() != "";
-  //  }
-
+    //public bool HasAuthenticatedPreviously()
+    //{
+    //    return m_BrainCloud.GetStoredProfileId() != "" && m_BrainCloud.GetStoredAnonymousId() != "";
+   // }
+//
     public bool IsAuthenticated()
     {
         return m_BrainCloud.Client.Authenticated;
     }
 
-    //public void Reconect(AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null) 
+   // public void Reconect(AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null) 
    // {
-     //   BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
-     //   {
-     //       Debug.Log("Reconnect authentication success: " + responseData);
+   //     BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+   //     {
+    //        Debug.Log("Reconnect authentication success: " + responseData);
+//
+    //        HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
+    //    };
 
-      //      HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
-     //   };
-
-     //   BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
-      //  {
-      //      Debug.Log("Reconnect authentication failed: " + statusMessage);
+    //    BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+    //    {
+     //       Debug.Log("Reconnect authentication failed: " + statusMessage);
 //
      //       if (authenticationRequestFailed != null)
-               // authenticationRequestFailed();
+      //          authenticationRequestFailed();
       //  };
 
-       // m_BrainCloud.Reconnect(successCallback, failureCallback);
+     //   m_BrainCloud.Reconnect(successCallback, failureCallback);
   //  }
 
 
-   // public void RequestAnnonymousAuthentication(AuthenticationRequestCompleted authenticationRequestCompleted = null,AuthenticationRequestFailed authenticationRequestFailed = null)
-   // {
-    //    BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
-    //    {
-     //       Debug.Log("RequestAnnonymousAuthentication success: " + responseData);
+    public void RequestAnnonymousAuthentication(AuthenticationRequestCompleted authenticationRequestCompleted = null,AuthenticationRequestFailed authenticationRequestFailed = null)
+   {
+        BrainCloud.SuccessCallback successCallback = (responseData, cbObject) =>
+        {
+            Debug.Log("RequestAnnonymousAuthentication success: " + responseData);
 
-     //       HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
-     //   };
+            HandleAuthenticationSuccess(responseData, cbObject, authenticationRequestCompleted);
+        };
 
-      //  BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
-     //   {
-     //       Debug.Log("RequestAnnonymousAuthentication failed: " + statusMessage);
+        BrainCloud.FailureCallback failureCallback = (statusMessage, code, error, cbObject) =>
+        {
+            Debug.Log("RequestAnnonymousAuthentication failed: " + statusMessage);
 
-      //      if (authenticationRequestFailed != null)
-              //  authenticationRequestFailed();
-     //   };
+            if (authenticationRequestFailed != null)
+                authenticationRequestFailed();
+        };
 
-     //   m_BrainCloud.AuthenticateAnonymous(successCallback, failureCallback);
+        m_BrainCloud.AuthenticateAnonymous(successCallback, failureCallback);
 
-   // }
+    }
 
     public void RequestAuthenticationUniversal(string userID, string password, AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null )
     {
@@ -129,7 +129,7 @@ public class Network : MonoBehaviour
                 Debug.Log("Username Request Success: " + responseData);
 
                 JsonData jsonData = JsonMapper.ToObject(responseData);
-                m_Username = jsonData["data"]["playerName"].ToString();
+                m_Username = jsonData["data"]["playerCount"].ToString();
 
                 if(updateUserNameRequestCompleted != null)
                 {
@@ -154,7 +154,8 @@ public class Network : MonoBehaviour
     private void HandleAuthenticationSuccess(string responseData, object cbObject, AuthenticationRequestCompleted authenticationRequestCompleted)
     {
         JsonData jsonData = JsonMapper.ToObject(responseData);
-        m_Username = jsonData["data"]["playerName"].ToString();
+        m_Username = jsonData["data"]["loginCount"].ToString();
+        Debug.Log(m_Username);
 
         if(authenticationRequestCompleted != null)
             authenticationRequestCompleted();
