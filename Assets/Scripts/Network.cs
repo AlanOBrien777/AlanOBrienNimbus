@@ -129,7 +129,7 @@ public class Network : MonoBehaviour
                 Debug.Log("Username Request Success: " + responseData);
 
                 JsonData jsonData = JsonMapper.ToObject(responseData);
-                m_Username = jsonData["data"]["playerCount"].ToString();
+                m_Username = jsonData["data"]["profileID"].ToString();
 
                 if(updateUserNameRequestCompleted != null)
                 {
@@ -154,7 +154,7 @@ public class Network : MonoBehaviour
     private void HandleAuthenticationSuccess(string responseData, object cbObject, AuthenticationRequestCompleted authenticationRequestCompleted)
     {
         JsonData jsonData = JsonMapper.ToObject(responseData);
-        m_Username = jsonData["data"]["loginCount"].ToString();
+        m_Username = jsonData["data"]["profileID"].ToString();
         Debug.Log(m_Username);
 
         if(authenticationRequestCompleted != null)

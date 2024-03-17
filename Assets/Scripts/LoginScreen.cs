@@ -13,6 +13,7 @@ public class LoginScreen : MonoBehaviour
     public Button cookieButton;
     [SerializeField] private TMP_InputField usernameField;
     [SerializeField] private TMP_InputField passwordField;
+    [SerializeField] private TMP_InputField newUsernameField;
     public GameObject loginCanvas;
     public GameObject cookieCanvas;
     public int score = 0;
@@ -63,8 +64,17 @@ public class LoginScreen : MonoBehaviour
 
     public void OnCookieButtonClick()
     {
-        Debug.Log("Is this working?");
+       // Debug.Log("Is this working?");
         score = score+1;
        
     }
+
+    public void OnUsernameButtonClick()
+    {
+        userNameText.text = "Username: " + newUsernameField.text.ToString();
+        Network.sharedInstance.RequestUserName(newUsernameField.text.ToString());
+        newUsernameField.text = "";
+    }
+    
+  
 }
