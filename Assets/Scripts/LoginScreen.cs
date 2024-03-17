@@ -19,6 +19,7 @@ public class LoginScreen : MonoBehaviour
     public GameObject newusername;
     public GameObject loginCanvas;
     public GameObject cookieCanvas;
+    public GameObject highScoreText;
     public int score = 0;
     public TMP_Text scoreText;
     public TMP_Text userNameText;
@@ -48,7 +49,7 @@ public class LoginScreen : MonoBehaviour
     {
 
         cookieCanvas.SetActive(false);
-
+        highScoreText.SetActive(false);
     }
 
 
@@ -56,6 +57,10 @@ public class LoginScreen : MonoBehaviour
     void Update()
     {
         scoreText.text = "Score: " + score.ToString();
+        if(score > Network.sharedInstance.highscore)
+        {
+            highScoreText.SetActive(true);
+        }
     }
 
     public void OnLoginButtonClick()
@@ -96,8 +101,6 @@ public class LoginScreen : MonoBehaviour
     {
         // Debug.Log("Is this working?");
         score = score + 1;
-        
-
     }
 
     public void OnUsernameButtonClick()
@@ -111,6 +114,7 @@ public class LoginScreen : MonoBehaviour
     {
         loginCanvas.SetActive(true);
         cookieCanvas.SetActive(false);
+        highScoreText.SetActive(false);
         Network.sharedInstance.PostScoreToLeaderboard(Constants.kBrainCloudMainLeaderbaordID,score,Network.sharedInstance.GetUserName(),m_PostScoreRequestCompleted,m_PostScoreRequestFailed);
         Network.sharedInstance.RequestUserName(Network.sharedInstance.GetUserName());
         score = 0;

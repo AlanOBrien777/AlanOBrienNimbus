@@ -3,6 +3,7 @@ using BrainCloud.JsonFx;
 using LitJson;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 
 
 
@@ -26,12 +27,16 @@ public class Network : MonoBehaviour
     public delegate void PostScoreRequestCompleted();
     public delegate void PostScoreRequestFailed();
 
+    public delegate void HighScoreRequestCompleted();
+    public delegate void HighScoreRequestFailed();
+
    
     public static Network sharedInstance;
 
     private BrainCloudWrapper m_BrainCloud;
 
     private string m_Username;
+    public int highscore = 0;
 
     private void Awake()
     {
@@ -98,6 +103,7 @@ public class Network : MonoBehaviour
 
         m_BrainCloud.PlayerStateService.Logout(successCallback, failureCallback);
     }
+
 
    // public void Reconect(AuthenticationRequestCompleted authenticationRequestCompleted = null, AuthenticationRequestFailed authenticationRequestFailed = null)
   //  {
@@ -216,11 +222,13 @@ public class Network : MonoBehaviour
                 Debug.Log("RequestHighScore success" + responseData);
                 JsonData jsonData = JsonMapper.ToObject(responseData);
                 JsonData leaderboard = jsonData["data"]["leaderboard"];
+         
 
                 List<LeaderboardEntry> leaderboardEntries = new List<LeaderboardEntry>();
                 int rank = 0;
                 string nickname;
                 int score = 0;
+                
 
                 if (leaderboard.IsArray)
                 {
@@ -229,6 +237,10 @@ public class Network : MonoBehaviour
                         rank = int.Parse(leaderboard[i]["rank"].ToString());
                         nickname = leaderboard[i]["data"]["nickname"].ToString();
                         score = int.Parse(leaderboard[i]["score"].ToString());
+                        if(score > highscore)
+                        {
+                            highscore = score;
+                        }
 
                         leaderboardEntries.Add(new LeaderboardEntry(nickname,rank,score));
                     }
