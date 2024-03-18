@@ -46,7 +46,7 @@ I also felt I went into my cookie clicker idea without thinking how I could inte
 
 I certianly learned to manage my time better and how to motivate myself during my free time by simply giving myself smaller tasks to approach each step of the way.
 
-Video Link: 
+Video Link: https://www.youtube.com/watch?v=njlarMx2fgk
 
 
 
