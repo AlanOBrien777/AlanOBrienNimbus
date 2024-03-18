@@ -48,6 +48,8 @@ I certianly learned to manage my time better and how to motivate myself during m
 
 Video Link: https://www.youtube.com/watch?v=njlarMx2fgk
 
+I would also like to add I attempted some cloud scripting but was not sure how I would integrate it with my game idea so I do have a cloud script availbale to see in braincloud which shows me attempting to retireve the highscore using it but in the end I found it easier to just do it using the c# scripts. I also attempted to retireve the login count of the user to have a bonus to the score for a number of consecutive logins yet I scrapped it as I was unable to retrieve it in the cloud script. If I had given myself more time I believe I could of integrated it in some way.
+
 
 
 
